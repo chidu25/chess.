@@ -1,7 +1,8 @@
 // Chess App with chess-api.com integration
 const game = new Chess();
-let selectedSquare = null;
+let selected Square = null;
 let gameHistory = JSON.parse(localStorage.getItem('gameHistory')) || [];
+let isAIThinking = false;
 const PIECES = {w:{K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙'},b:{K:'♚',Q:'♛',R:'♜',B:'♝',N:'♞',P:'♟︎'}};
 
 // Initialize
@@ -38,11 +39,15 @@ function updateBoard() {
 }
 
 function handleSquareClick(square) {
-    if(game.game_over()) return;
+    if(game.game_over() || isAIThinking) return;
+    
+    // Only allow white (human) to move
+    if(game.turn() !== 'w') return;
     
     if(!selectedSquare) {
         const piece = game.get(square);
-        if(piece && piece.color === game.turn()) {
+        // Only allow selecting white pieces
+        if(piece && piece.color === 'w') {
             selectedSquare = square;
             document.querySelector(`[data-square="${square}"]`).classList.add('selected');
             highlightMoves(square);
@@ -50,12 +55,16 @@ function handleSquareClick(square) {
     } else {
         const move = game.move({from: selectedSquare, to: square, promotion: 'q'});
         if(move) {
+            selectedSquare = null;
+            document.querySelectorAll('.square').forEach(s => s.classList.remove('selected', 'highlight'));
             updateBoard();
-            saveGame();
-            setTimeout(() => getAIMove(), 500);
+            if(!game.game_over()) {
+                setTimeout(() => getAIMove(), 500);
+            }
+        } else {
+            selectedSquare = null;
+            document.querySelectorAll('.square').forEach(s => s.classList.remove('selected', 'highlight'));
         }
-        selectedSquare = null;
-        document.querySelectorAll('.square').forEach(s => s.classList.remove('selected', 'highlight'));
     }
 }
 
@@ -67,7 +76,8 @@ function highlightMoves(square) {
 }
 
 async function getAIMove() {
-    if(game.game_over()) return;
+    if(game.game_over() || isAIThinking) return;
+    isAIThinking = true;
     const depth = document.getElementById('aiDepth').value;
     try {
         document.getElementById('status').textContent = 'AI thinking...';
@@ -85,6 +95,9 @@ async function getAIMove() {
         }
     } catch(err) {
         console.error('AI move error:', err);
+        document.getElementById('status').textContent = 'AI error - your turn';
+    } finally {
+        isAIThinking = false;
     }
 }
 
@@ -122,13 +135,17 @@ function saveGame() {
 function setupEventListeners() {
     document.getElementById('newGame').onclick = () => {
         game.reset();
+        isAIThinking = false;
+        selectedSquare = null;
         initBoard();
     };
     
     document.getElementById('undoMove').onclick = () => {
-        game.undo();
-        game.undo();
-        updateBoard();
+        if(!isAIThinking) {
+            game.undo();
+            game.undo();
+            updateBoard();
+        }
     };
     
     document.querySelectorAll('.tab-btn').forEach(btn => {
