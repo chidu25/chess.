@@ -1,6 +1,6 @@
 // Chess App with chess-api.com integration
 const game = new Chess();
-let selected Square = null;
+let selectedSquare = null;
 let gameHistory = JSON.parse(localStorage.getItem('gameHistory')) || [];
 let isAIThinking = false;
 const PIECES = {w:{K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙'},b:{K:'♚',Q:'♛',R:'♜',B:'♝',N:'♞',P:'♟︎'}};
