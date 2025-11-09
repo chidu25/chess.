@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess. - Play, Analyze & Learn</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>♟️ chess.</h1>
+            <p class="tagline">AI-Powered Chess Experience</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="play">Play vs AI</button>
+            <button class="tab-btn" data-tab="analyze">Analyze Position</button>
+            <button class="tab-btn" data-tab="games">Game History</button>
+        </div>
+
+        <div id="play" class="tab-content active">
+            <div class="game-controls">
+                <div class="control-group">
+                    <label>AI Depth:</label>
+                    <select id="aiDepth">
+                        <option value="8">Easy (Depth 8)</option>
+                        <option value="12" selected>Medium (Depth 12)</option>
+                        <option value="15">Hard (Depth 15)</option>
+                    </select>
+                </div>
+                <button id="newGame" class="btn btn-primary">New Game</button>
+                <button id="undoMove" class="btn">Undo Move</button>
+            </div>
+            
+            <div class="game-area">
+                <div id="board" class="chessboard"></div>
+                <div class="game-info">
+                    <div id="status" class="status">White to move</div>
+                    <div id="evaluation" class="evaluation"></div>
+                    <div class="move-history">
+                        <h3>Moves</h3>
+                        <div id="moveList" class="moves"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="analyze" class="tab-content">
+            <div class="analyze-controls">
+                <label>FEN Position:</label>
+                <input type="text" id="fenInput" class="fen-input" placeholder="Paste FEN notation here">
+                <button id="analyzeBtn" class="btn btn-primary">Analyze</button>
+                <button id="loadCurrent" class="btn">Load Current Game</button>
+            </div>
+            
+            <div id="analysisBoard" class="chessboard"></div>
+            
+            <div class="analysis-results">
+                <h3>Analysis</h3>
+                <div id="analysisOutput" class="analysis-content"></div>
+            </div>
+        </div>
+
+        <div id="games" class="tab-content">
+            <div class="history-controls">
+                <button id="clearHistory" class="btn btn-danger">Clear History</button>
+                <button id="exportPGN" class="btn">Export PGN</button>
+            </div>
+            <div id="gameHistory" class="game-history"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
